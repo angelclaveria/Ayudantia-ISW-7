@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { TaskCard } from '../components/TaskCard';
 import { CreateTaskForm } from '../components/CreateTaskForm';
+import { EditTaskModal } from '../components/EditTaskModal';
 import tasksService from '../services/tasks.service';
 import { useAuth } from '../context/AuthContext';
 
@@ -9,6 +10,7 @@ export function TasksPage() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editingTask, setEditingTask] = useState(null);
 
   // Carga inicial de tareas del usuario autenticado desde el backend
   useEffect(() => {
@@ -65,6 +67,16 @@ export function TasksPage() {
     setTasks((prevTasks) => [newTask, ...prevTasks]);
   };
 
+  const handleEditClick = (task) => {
+    setEditingTask(task);
+  };
+
+  const handleTaskUpdated = (updatedTask) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((t) => (t.id === updatedTask.id ? updatedTask : t))
+    );
+  };
+
   return (
     <div className="min-h-screen bg-slate-900 text-white p-8">
       <div className="max-w-2xl mx-auto">
@@ -116,6 +128,7 @@ export function TasksPage() {
                 completed={task.completed}
                 onToggle={() => handleToggle(task.id)}
                 onDelete={() => handleDelete(task.id)}
+                onEdit={() => handleEditClick(task)}
               />
             ))}
 
@@ -126,6 +139,12 @@ export function TasksPage() {
             )}
           </div>
         )}
+
+        <EditTaskModal 
+          task={editingTask} 
+          onClose={() => setEditingTask(null)} 
+          onTaskUpdated={handleTaskUpdated} 
+        />
       </div>
     </div>
   );

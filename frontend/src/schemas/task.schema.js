@@ -14,3 +14,19 @@ export const createTaskSchema = z.object({
     .max(500, 'La descripción no puede superar los 500 caracteres')
     .optional()
 });
+
+// Esquema de validación con Zod para el formulario de edición de tareas
+export const updateTaskSchema = z.object({
+  title: z
+    .string({ required_error: 'El título es obligatorio' })
+    .trim()
+    .min(1, 'El título es obligatorio')
+    .min(3, 'El título debe tener al menos 3 caracteres')
+    .max(150, 'El título no puede superar los 150 caracteres'),
+  description: z
+    .string()
+    .trim()
+    .max(500, 'La descripción no puede superar los 500 caracteres')
+    .optional(),
+  completed: z.boolean().optional()
+});
